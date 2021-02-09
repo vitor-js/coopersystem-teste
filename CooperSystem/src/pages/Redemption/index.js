@@ -2,7 +2,6 @@ import React, { useEffect, useState } from 'react';
 import { View,ScrollView,SafeAreaView, StyleSheet,ActivityIndicator,Text, KeyboardAvoidingView,TextInput,TouchableOpacity} from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
 import TextInputMask from 'react-native-text-input-mask';
-import Modal from '../../components/Modal'
 
 const Redemption = ({ route, navigation}) => {
     const { item, list } = route.params;
@@ -69,7 +68,6 @@ const Redemption = ({ route, navigation}) => {
 
   return (
       <>
-      <Modal/>
     {data ?
     <SafeAreaView style={styles.Container}>
         <ScrollView> 

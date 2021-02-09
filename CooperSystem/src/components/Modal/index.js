@@ -3,8 +3,8 @@ import { View,Modal } from 'react-native';
 
 // import { Container } from './styles';
 
-const Modal = () => {
+const ModalConfirm = () => {
   return <Modal></Modal>;
 }
 
-export default Modal;
+export default ModalConfirm;

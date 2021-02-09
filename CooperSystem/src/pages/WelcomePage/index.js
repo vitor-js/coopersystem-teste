@@ -20,7 +20,7 @@ const WelcomePage = () => {
             Tenha todo controle do seu seguro na palma da sua mão
         </Text>
       </View>
-      <Submit message={'Abra sua conta'} color={'#EDD100'} pressFunction={() => navigation.navigate('LoginScreen')} />
+      <Submit message={'Abra sua conta'} color={'#EDD100'} pressFunction={() => navigation.navigate('RedemptionList')} />
       <Submit message={'Acesse sua conta'} color={'transparent'} style={styles.button} pressFunction={() => navigation.navigate('RedemptionList')} />
     </ImageBackground>
   )}
