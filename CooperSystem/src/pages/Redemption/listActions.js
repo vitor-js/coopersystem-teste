@@ -18,7 +18,7 @@ const wait = (timeout) => {
 
 const submit = (e) => {
     const valueUpdate = e.replace('R$','')
-    wait(2000).then(() => setRescue(parseInt(rescue) + parseInt(valueUpdate)))    
+    wait(2000).then(() => setRescue(parseInt(rescue) + parseInt(valueUpdate)))
 }
 
 
