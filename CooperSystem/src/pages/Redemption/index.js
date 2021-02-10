@@ -1,74 +1,38 @@
 import React, { useEffect, useState } from 'react';
-import { View,ScrollView,SafeAreaView, StyleSheet,ActivityIndicator,Text, KeyboardAvoidingView,TextInput,TouchableOpacity} from 'react-native';
+import { View,ScrollView,SafeAreaView, StyleSheet,ActivityIndicator,Text, KeyboardAvoidingView,TextInput,TouchableOpacity,Alert} from 'react-native';
 import { FlatList } from 'react-native-gesture-handler';
-import TextInputMask from 'react-native-text-input-mask';
+
+import Modal from '../../components/Modal/index'
+
+import ListActions from './listActions.js'
 
 const Redemption = ({ route, navigation}) => {
     const { item, list } = route.params;
     const [data, setData] = useState(false)
     const [actionsData, setActionsData] = useState(false)
     const [rescue, setRescue] = useState(0)
-
-    const [modalVisible, setModalVisible] = useState(false);
+    const [isVisible, setIsVisible] = useState(false)
 
     useEffect(()=> {
     setData(item)
     setActionsData(list)    
     },[])
 
-    const wait = (timeout) => {
-        return new Promise(resolve => setTimeout(resolve, timeout));
-      }
-
-    const submit = (e) => {
-        const valueUpdate = e.replace('R$','')
-        wait(2000).then(() => setRescue(parseInt(rescue) + parseInt(valueUpdate)))    
-    }
-
-    const request = () => {
+    const onsubmitValue = ()=> {
         if(rescue > data.saldoTotalDisponivel) {
+            Alert.alert(
+                "Sldo insdisponível para saque",
+                `apenas é possível solicitar valores abaixo de ${data.saldoTotalDisponivel.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}`
+            )
             return
         }
-        setModalVisible(true)
+        setIsVisible(true)
     }
-
-
-    const Card = ({item}) => {
-        const first = list[0].id
-        const balance = ( data.saldoTotalDisponivel * item.percentual ) / 100 
-       
-        return (
-            <View style={[{marginTop:item.id !== first ? 40 : 0}]}>
-                <View style={styles.Label}>
-                    <Text style={styles.Key}>
-                        Ação
-                    </Text>
-                    <Text style={styles.Value}>
-                        {item.nome}
-                    </Text>
-                </View>
-                <View style={styles.Label}>
-                    <Text style={styles.Key}>
-                       Saldo acumulado
-                    </Text>
-                    <Text style={styles.Value}>
-                        {balance && balance.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}
-                    </Text>
-                </View>
-                <KeyboardAvoidingView>
-                    <View style={styles.LabelForm}>
-                    <Text style={styles.TextLabel}>Valor a resgatar</Text>
-                    <TextInputMask  mask={"R$[9999999999999][99]"}  keyboardType = 'numeric'   onChangeText={e => submit(e)}  style={[styles.input]}/>
-                    {/* {rescue > balance ? <Text style={styles.Alert}> O valor não pode ser maior que {balance}</Text> : null} */}
-                    </View>
-                </KeyboardAvoidingView>
-                
-            </View>
-    )}
-
+ 
   return (
       <>
-    {data ?
+    {data ?<>
+    <Modal isVisible={isVisible} onClose={()=>setIsVisible(false)}/>
     <SafeAreaView style={styles.Container}>
         <ScrollView> 
 
@@ -101,8 +65,9 @@ const Redemption = ({ route, navigation}) => {
 
             <FlatList
             data={actionsData}
-            renderItem={Card}
-            keyExtractor={(actionsData) => actionsData.id}/>
+            keyExtractor={(actionsData) => actionsData.id}
+            renderItem={({item, index}) =>  <ListActions data={item} index={index} rescue={rescue} setRescue={setRescue} totalValue={data.saldoTotalDisponivel} />}
+            />
 
             <View style={styles.Label}>
                 <Text style={styles.Key}>
@@ -113,16 +78,20 @@ const Redemption = ({ route, navigation}) => {
                     {Number.isNaN(rescue) !== true ? `R$${rescue}` : `R$${0}` }
                 </Text>
             </View>
-            {rescue > data.saldoTotalDisponivel ? <Text style={styles.Alert}> O valor não pode ser maior que { data.saldoTotalDisponivel.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</Text> : null}
 
-            <TouchableOpacity onPress={()=>{request()}}>
-                <View style={styles.ButtonConfirm}>
+            {rescue > data.saldoTotalDisponivel ?
+            <View style={styles.Label} >
+                <Text style={styles.Alert}> O valor não pode ser maior que { data.saldoTotalDisponivel.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</Text>
+            </View> : null}
+
+            <View style={styles.ButtonConfirm}>
+                <TouchableOpacity  onPress={()=>{onsubmitValue()}}>
                     <Text style={styles.textConfirmButton}>Realizar resgate</Text>
-                </View>
-            </TouchableOpacity>
-
+                </TouchableOpacity>
+            </View>           
         </ScrollView>
     </SafeAreaView>
+    </>
     :<ActivityIndicator style={styles.Loading} size="large" color="#0000ff"/>}
     </>
 )}
@@ -188,14 +157,12 @@ const styles = StyleSheet.create({
        },
        Alert: {
            color:'red',
-           marginTop:10
+           fontWeight:'700'
        },
        ButtonConfirm: {
            height:50,
            width:'100%',
            backgroundColor:'#EDD100',
-           position:'absolute',
-            bottom:4,
             justifyContent:'center',
             alignItems:'center'
        },

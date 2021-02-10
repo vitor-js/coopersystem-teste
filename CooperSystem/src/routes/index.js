@@ -12,7 +12,6 @@ const Stack = createStackNavigator();
 function Index() {
 
   const [configOption, setConfigOption] = useState({
-      colorTextHeader:'white',
       backgroundColor:'#005AA5',
       borderBottomColor:'#EDD100',
       borderBottomWidth:5,
@@ -29,12 +28,12 @@ function Index() {
             <Stack.Screen name="RedemptionList" component={RedemptionList} 
             options={{
               title:'Resgate',
-              headerTintColor: `${configOption.colorTextHeader}`,
+              colorTextHeader:'white',
               headerStyle:configOption}}/>
             <Stack.Screen name="Redemption" component={Redemption} 
             options={{
               title:'Resgate',
-              headerTintColor: `${configOption.colorTextHeader}`,
+              colorTextHeader:'white',
               headerStyle:configOption}}/>
 
       </Stack.Navigator>
